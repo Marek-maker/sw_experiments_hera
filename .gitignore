@@ -157,6 +157,10 @@ ENV/
 env.bak/
 venv.bak/
 
+# Generated demo artifacts (reproducible via image_compression/demo.py)
+data/
+image_compression/results/demo/
+
 # Spyder project settings
 .spyderproject
 .spyproject
