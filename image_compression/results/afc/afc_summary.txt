@@ -1,22 +1,47 @@
 Hera AFC tile-selection benchmark
-frames processed: 404
-tile size: 16px | min_score_threshold: 0.5
-total wall time: 85.9s
+frames processed: 404  (skipped 0)
+tile size: 12px | min_score_threshold: 0.5
+ground-trained (frozen) model: trained on 200 frames
+total wall time: 301.0s
+WARNING: 12px tiles do not divide the 1020px AFC frame, so 0.00% of every frame is NEVER EXAMINED (edge strip). Payload % is still reported against the FULL frame. Use a tile size that divides 1020 (12/15/20/30/34/60) for full coverage.
 
-[heuristic] n=404
-  payload vs full frame: mean 55.08%  median 50.75%
-  range: min 16.30%  p25 29.91%  p75 78.64%  max 97.69%
-  selected area: mean 54.67% of the frame
-  rectangles: mean 214.9
+[heuristic (BASELINE, no stored model)]
+  payload vs full frame: mean 53.90%  median 46.88%
+  range: min 15.39%  p25 27.67%  p75 77.60%  max 100.14%
+  selected area: mean 53.27% of frame | rectangles: mean 326.7
+  frames per 12 MB / 3 h slot: 25.8 (raw would be 12.1)
 
-[iforest] n=404
-  payload vs full frame: mean 15.76%  median 15.04%
-  range: min 5.87%  p25 13.03%  p75 17.04%  max 36.49%
-  selected area: mean 15.21% of the frame
-  rectangles: mean 284.0
+[iForest fitted PER FRAME (analysis code; not flight-realistic)]
+  payload vs full frame: mean 13.09%  median 12.21%
+  range: min 5.02%  p25 10.79%  p75 13.93%  max 30.07%
+  selected area: mean 12.31% of frame | rectangles: mean 405.6
+  frames per 12 MB / 3 h slot: 99.1 (raw would be 12.1)
+
+[iForest FROZEN ground-trained model (FLIGHT DESIGN)]
+  payload vs full frame: mean 13.10%  median 10.05%
+  range: min 3.25%  p25 8.74%  p75 13.66%  max 78.25%
+  selected area: mean 12.31% of frame | rectangles: mean 412.3
+  frames per 12 MB / 3 h slot: 120.3 (raw would be 12.1)
+
+Frozen-model absolute anomaly score (median per frame) - for a fixed on-board threshold:
+  min 0.4328  median 0.4367  max 0.5052
+  spread across frames: 0.0724 -> a single fixed threshold is NOT safe; per-frame normalisation needed
+
+Threshold sweep (median payload %, 404 frames):
+  threshold | heuristic | frozen
+       0.50 |   46.88 |   10.05
+       0.70 |   32.07 |    3.52
+
+Quantile selection on the frozen model (keep top q of scored tiles per frame):
+  q     | median payload % | min     | max     | frames/slot | predictable?
+   0.05 |             4.50 |    3.96 |    5.52 |       268.8 | max/min = 1.23x
+   0.10 |             8.84 |    7.77 |   10.95 |       136.8 | max/min = 1.24x
+   0.15 |            13.12 |   11.59 |   16.30 |        92.2 | max/min = 1.24x
+   0.20 |            17.48 |   15.52 |   21.64 |        69.2 | max/min = 1.24x
 
 Bandwidth framing (AFC 1020x1020, 8-bit, science budget 12 MB / 3 h slot)
   raw frame: 0.992 MB -> 12.1 raw frames per slot
-  iForest median payload 15.04% = 0.149 MB -> 80.4 frames per slot (6.6x raw)
-  iForest best (min) payload 5.87% = 0.058 MB -> 206.0 frames per slot (17.0x raw)
-  (heuristic median payload 50.75% - baseline only)
+  frozen median  10.05% -> 120.3 frames/slot (10.0x raw)
+  frozen best    3.25% -> 372.1 frames/slot (30.8x raw)
+  frozen worst   78.25% -> 15.5 frames/slot (1.3x raw)
+  NOTE: these are PRIORITISED SUBSETS, not complete frames - see the proposal caveat.
