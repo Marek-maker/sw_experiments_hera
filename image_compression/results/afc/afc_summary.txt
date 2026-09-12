@@ -1,0 +1,22 @@
+Hera AFC tile-selection benchmark
+frames processed: 404
+tile size: 16px | min_score_threshold: 0.5
+total wall time: 85.9s
+
+[heuristic] n=404
+  payload vs full frame: mean 55.08%  median 50.75%
+  range: min 16.30%  p25 29.91%  p75 78.64%  max 97.69%
+  selected area: mean 54.67% of the frame
+  rectangles: mean 214.9
+
+[iforest] n=404
+  payload vs full frame: mean 15.76%  median 15.04%
+  range: min 5.87%  p25 13.03%  p75 17.04%  max 36.49%
+  selected area: mean 15.21% of the frame
+  rectangles: mean 284.0
+
+Bandwidth framing (AFC 1020x1020, 8-bit, science budget 12 MB / 3 h slot)
+  raw frame: 0.992 MB -> 12.1 raw frames per slot
+  iForest median payload 15.04% = 0.149 MB -> 80.4 frames per slot (6.6x raw)
+  iForest best (min) payload 5.87% = 0.058 MB -> 206.0 frames per slot (17.0x raw)
+  (heuristic median payload 50.75% - baseline only)
