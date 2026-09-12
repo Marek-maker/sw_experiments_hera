@@ -71,7 +71,10 @@ def score_tiles_iforest(
 
         # 2. Fit Isolation Forest on valid surface tiles
         # 32 trees and max_samples=256 keeps execution blazingly fast
-        clf = IsolationForest(n_estimators=64, max_samples=512)
+        # random_state is PINNED so a benchmark run is reproducible: without it
+        # the same input gives slightly different scores on every run (observed
+        # median payload drifting 12.02% -> 12.21% between two identical runs).
+        clf = IsolationForest(n_estimators=64, max_samples=512, random_state=42)
         clf.fit(valid_features)
 
         # 3. Compute decision scores

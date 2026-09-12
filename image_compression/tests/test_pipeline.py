@@ -213,6 +213,16 @@ def test_frozen_model_is_deterministic():
     assert np.allclose(raw_iforest_scores(f, m1), raw_iforest_scores(f, m2))
 
 
+def test_perframe_iforest_is_deterministic():
+    """REGRESSION: the per-frame fit had no random_state, so identical input gave
+    slightly different scores on every run (median payload drifted 12.02% ->
+    12.21% between two identical benchmark runs)."""
+    f = extract_tile_features_advanced(textured_frame(1020, seed=11), tile_size=16)
+    a = score_tiles_iforest(f)
+    b = score_tiles_iforest(f)
+    assert np.array_equal(a, b), "per-frame scoring must be reproducible"
+
+
 def test_frozen_inference_does_not_fit():
     """The flight path must be pure inference - no fitting inside score_tiles_iforest_model."""
     src = open(os.path.join(IMGC, "scoring.py"), encoding="utf-8").read()

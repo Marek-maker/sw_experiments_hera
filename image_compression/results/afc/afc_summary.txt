@@ -2,7 +2,7 @@ Hera AFC tile-selection benchmark
 frames processed: 404  (skipped 0)
 tile size: 12px | min_score_threshold: 0.5
 ground-trained (frozen) model: trained on 200 frames
-total wall time: 301.0s
+total wall time: 301.3s
 WARNING: 12px tiles do not divide the 1020px AFC frame, so 0.00% of every frame is NEVER EXAMINED (edge strip). Payload % is still reported against the FULL frame. Use a tile size that divides 1020 (12/15/20/30/34/60) for full coverage.
 
 [heuristic (BASELINE, no stored model)]
@@ -12,10 +12,10 @@ WARNING: 12px tiles do not divide the 1020px AFC frame, so 0.00% of every frame 
   frames per 12 MB / 3 h slot: 25.8 (raw would be 12.1)
 
 [iForest fitted PER FRAME (analysis code; not flight-realistic)]
-  payload vs full frame: mean 13.09%  median 12.21%
-  range: min 5.02%  p25 10.79%  p75 13.93%  max 30.07%
-  selected area: mean 12.31% of frame | rectangles: mean 405.6
-  frames per 12 MB / 3 h slot: 99.1 (raw would be 12.1)
+  payload vs full frame: mean 12.78%  median 11.89%
+  range: min 5.82%  p25 10.64%  p75 13.36%  max 28.27%
+  selected area: mean 12.02% of frame | rectangles: mean 398.5
+  frames per 12 MB / 3 h slot: 101.7 (raw would be 12.1)
 
 [iForest FROZEN ground-trained model (FLIGHT DESIGN)]
   payload vs full frame: mean 13.10%  median 10.05%

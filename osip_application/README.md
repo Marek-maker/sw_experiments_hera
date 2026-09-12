@@ -71,7 +71,7 @@ Official Use Only* and are never committed):
 | Mode | Median payload | Worst case | Frames per 12 MB / 3 h slot |
 |---|---|---|---|
 | Heuristic baseline | 46.9 % | 100.1 % | 25.8 |
-| Per-frame-fit iForest *(analysis reference, not flight-feasible)* | 12.0 % | 31.7 % | 100.7 |
+| Per-frame-fit iForest *(analysis reference, not flight-feasible)* | 11.9 % | 28.3 % | 101.7 |
 | Frozen model, fixed threshold | 10.1 % | **78.3 %** | 120.3 |
 | **Frozen model + quantile q=0.10** *(recommended)* | **8.8 %** | **11.0 %** | **136.8** |
 | Frozen model + quantile q=0.15 | 13.1 % | 16.3 % | 92.2 |
@@ -89,10 +89,11 @@ defect, not a hypothetical.
 | 4 | **A fixed score threshold is not safe.** Out-of-distribution frames made *every* tile look anomalous (worst case **78.3 %** of the frame = 4× the budget) | **critical** | Introduced **quantile selection** (keep the top *q* fraction of scored tiles). Measured spread collapses from **24×** to **1.24×** — predictable bandwidth, and an allocation-free O(n) histogram implementation |
 | 5 | Ageing docstring claimed 7 features; the pipeline computes **4** | low | Corrected, with a cross-reference to the real feature list |
 | 6 | The heuristic has **no** noise floor while iForest applies `scores < 0.15 → 0` — the two modes are not post-processed identically, so a naive head-to-head is confounded | medium | Disclosed in the proposal; the honest comparison stated is **each mode vs the 100 % baseline**, not mode vs mode |
-| 7 | No tests at all | high | **19-case suite** (`tests/test_pipeline.py`), synthetic frames only: payload maths, tiling geometry, rectangle **disjointness** (required by the area-sum payload model), degenerate frames (all-black, uniform), determinism, frozen-inference purity (asserts it never calls `.fit`), quantile behaviour |
+| 7 | No tests at all | high | **20-case suite** (`tests/test_pipeline.py`), synthetic frames only: payload maths, tiling geometry, rectangle **disjointness** (required by the area-sum payload model), degenerate frames (all-black, uniform), determinism, frozen-inference purity (asserts it never calls `.fit`), quantile behaviour |
 | 8 | Unsupported literature claim ("not seen in the onboard-compression literature") | medium | Softened to "we are aware of"; the claim is now scoped to the specific optimisation (choice of content, not bytes) |
 | 9 | "6.6× more frames" conflated partial frames with complete frames | medium | Explicit caveat added: these are **prioritised subsets**, not complete images |
 | 10 | An early 10-frame test showed a frozen-model score spread of 0.0015 and I nearly reported "a fixed on-board threshold is plausible" | **critical** | Re-ran on all 404 frames → spread **0.072** → the opposite conclusion. Lesson recorded: never calibrate on a 10-frame subset of a homogeneous sequence |
+| 11 | The per-frame fit had **no `random_state`** — identical input produced slightly different scores each run (median payload drifted 12.02 % → 12.21 % between two identical runs) | medium | `random_state=42` pinned; regression test added. The frozen path was already seeded, so only the analysis reference moved |
 
 ## ✅ Done
 
@@ -102,7 +103,7 @@ defect, not a hypothetical.
   frozen model, quantile selection).
 - Benefits and resource estimates aligned to the real packet/slot limits.
 - `afc_benchmark.py` (three scoring paths + threshold sweep + quantile sweep + coverage check).
-- 404-frame measurements; 19 passing tests.
+- 404-frame measurements; 20 passing tests.
 
 ## ⬜ Pending
 
@@ -119,6 +120,6 @@ defect, not a hypothetical.
 | `OSIP_Ca-2026-00066_idea.md` | the proposal |
 | `../image_compression/afc_benchmark.py` | benchmark (per-frame / frozen / heuristic + sweeps) |
 | `../image_compression/scoring.py` | scoring incl. the frozen-inference path |
-| `../image_compression/tests/test_pipeline.py` | 19 tests |
+| `../image_compression/tests/test_pipeline.py` | 20 tests |
 | `../image_compression/results/afc/afc_stats.csv` | per-frame results, 404 rows |
 | `../image_compression/results/afc/afc_summary.txt` | aggregate statistics |

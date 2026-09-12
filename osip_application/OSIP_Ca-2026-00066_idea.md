@@ -49,7 +49,7 @@ downlink budget** — with the ROI merge itself optimised against the telemetry 
 | Mode | Median payload vs full frame | Worst-case payload | Frames per 12 MB / 3 h slot |
 |---|---|---|---|
 | Heuristic baseline | 46.9 % | 100.1 % | 25.8 |
-| Per-frame-fit iForest *(analysis reference; not flight-feasible)* | 12.0 % | 31.7 % | 100.7 |
+| Per-frame-fit iForest *(analysis reference; not flight-feasible)* | 11.9 % | 28.3 % | 101.7 |
 | **Frozen ground-trained iForest + quantile q=0.10** *(flight design)* | **8.8 %** | **11.0 %** | **136.8** (11.3× the raw-frame count) |
 
 A working reference implementation exists and produced these numbers; Phase 2 is the C port to the
@@ -172,7 +172,7 @@ claim.
 
 **Feasibility of the reference implementation.** The pipeline already runs end to end: tiling,
 feature extraction, both scorers, the frozen-model inference path, quadtree merging, quantile
-selection and visualisation, with 404 reference frames processed and measured. A 19-case test suite
+selection and visualisation, with 404 reference frames processed and measured. A 20-case test suite
 covers the payload model, tiling geometry, rectangle disjointness, degenerate frames (all-black,
 uniform), determinism, the frozen inference path and quantile behaviour. The Python/NumPy form is
 the *algorithmic reference*; Phase 2 is the C port to **BCC 4.4.2**.
@@ -201,7 +201,7 @@ at 5 int32 per rectangle.
 | Mode | Median payload | Worst-case payload | Frames per 12 MB / 3 h slot |
 |---|---|---|---|
 | Heuristic baseline | 46.9 % | 100.1 % | 25.8 |
-| Per-frame-fit iForest *(analysis reference)* | 12.0 % | 31.7 % | 100.7 |
+| Per-frame-fit iForest *(analysis reference)* | 11.9 % | 28.3 % | 101.7 |
 | Frozen model, fixed threshold | 10.1 % | **78.3 %** | 120.3 |
 | **Frozen model + quantile q=0.10** *(recommended)* | **8.8 %** | **11.0 %** | **136.8** |
 | Frozen model + quantile q=0.15 | 13.1 % | 16.3 % | 92.2 |
@@ -257,7 +257,7 @@ schedule and one they cannot.**
 - **Reproducible**: `afc_benchmark.py` processes a directory of AFC frames and emits
   `afc_stats.csv` and `afc_summary.txt`; a demo notebook and headless demo script are in the same
   repository.
-- **Tested**: a 19-case suite (`image_compression/tests/test_pipeline.py`) covers the payload model,
+- **Tested**: a 20-case suite (`image_compression/tests/test_pipeline.py`) covers the payload model,
   tiling geometry (including the frame-coverage check that motivated the 12-px tile choice),
   rectangle disjointness, degenerate frames, determinism, the frozen inference path (including a
   guard that it never fits anything) and quantile behaviour.
@@ -336,7 +336,7 @@ candidate imagery, with metadata overhead explicitly minimised by the quadtree m
 image_compression/
   utils.py · features.py · scoring.py · tiles_merging.py · main.py · demo.py
   afc_benchmark.py            # headless benchmark over a directory of AFC frames
-  tests/test_pipeline.py      # 19 tests (synthetic frames only)
+  tests/test_pipeline.py      # 20 tests (synthetic frames only)
 notebooks/hera_image_compression_demo.ipynb
 doc/Autonomous_Edge_Inference_Tile_Downlink_Pipeline.md
 ```
